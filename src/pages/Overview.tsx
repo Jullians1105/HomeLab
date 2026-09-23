@@ -1,9 +1,21 @@
 import { useState } from "react";
+import LiveIndicator from "../components/ui/LiveIndicator";
 import CpuChart from "../components/ui/CpuChart";
 import MetricCard from "../components/ui/MetricCard";
 import ProgressBar from "../components/ui/ProgressBar";
 import SectionHeader from "../components/ui/SectionHeader";
 import ServiceStatCard from "../components/ui/ServiceStatCard";
+import { usePolling } from "../hooks/usePolling";
+import {
+  fetchMetrics,
+  fetchMetricsHistory,
+  fetchServices,
+  fetchWorkflows,
+  type BackendMetrics,
+  type BackendService,
+  type BackendWorkflow,
+  type MetricRange,
+} from "../lib/api";
 import {
   cpuHistory24h,
   monthlyKpis,
@@ -12,12 +24,58 @@ import {
   systemMetrics,
   tenantClients,
 } from "../data/mock";
+import type { RunningWorkflow, ServiceCard, SystemMetric } from "../types";
 
-const RANGES = ["24H", "7D", "30D"] as const;
+const RANGES = [
+  { label: "24H", value: "24h" as MetricRange },
+  { label: "7D", value: "7d" as MetricRange },
+  { label: "30D", value: "30d" as MetricRange },
+];
+
+const METRIC_TO_BACKEND_KEY: Record<string, keyof BackendMetrics> = {
+  cpu: "cpu",
+  ram: "ram",
+  storage: "storage",
+  network: "bandwidth",
+};
+
+function withLiveGlobal(metric: SystemMetric, live: BackendMetrics | null): SystemMetric {
+  const key = METRIC_TO_BACKEND_KEY[metric.id];
+  const global = live?.[key]?.global;
+  if (global === undefined) return metric;
+  const rounded = Math.round(global);
+  return { ...metric, value: `${rounded}%`, percent: rounded };
+}
+
+function withLiveService(card: ServiceCard, live: BackendService[] | null): ServiceCard {
+  const match = live?.find((s) => s.name.toLowerCase() === card.name.toLowerCase());
+  if (!match) return card;
+  return { ...card, status: match.status, cpu: match.cpu, ram: match.ram };
+}
+
+function withLiveWorkflow(workflow: RunningWorkflow, live: BackendWorkflow[] | null): RunningWorkflow {
+  const match = live?.find((w) => w.id === workflow.id);
+  if (!match) return workflow;
+  return { ...workflow, progress: match.progress };
+}
 
 export default function Overview() {
   const [showAlert, setShowAlert] = useState(true);
-  const [range, setRange] = useState<(typeof RANGES)[number]>("24H");
+  const [range, setRange] = useState<MetricRange>("24h");
+
+  const { data: liveMetrics, isLive: metricsLive } = usePolling(fetchMetrics, 3000, null as BackendMetrics | null);
+  const { data: liveServices, isLive: servicesLive } = usePolling(fetchServices, 5000, null as BackendService[] | null);
+  const { data: liveWorkflows } = usePolling(fetchWorkflows, 5000, null as BackendWorkflow[] | null);
+  const { data: chartHistory } = usePolling(
+    (signal) => fetchMetricsHistory(range, signal),
+    3000,
+    { cpu: cpuHistory24h, ram: [], storage: [], bandwidth: [] },
+    [range],
+  );
+
+  const liveMetricCards = systemMetrics.map((m) => withLiveGlobal(m, liveMetrics));
+  const liveServiceCards = serviceCards.map((s) => withLiveService(s, liveServices));
+  const liveRunningWorkflows = runningWorkflows.map((w) => withLiveWorkflow(w, liveWorkflows));
 
   return (
     <>
@@ -54,13 +112,14 @@ export default function Overview() {
           icon="settings_suggest"
           title="Métricas en Tiempo Real"
           right={
-            <span className="font-mono-metric-sm text-mono-metric-sm text-on-surface-variant flex items-center gap-1">
-              <span className="inline-block w-1.5 h-1.5 rounded-full bg-tertiary" /> Polling cada 3s
-            </span>
+            <div className="flex items-center gap-space-sm">
+              <span className="font-mono-metric-sm text-mono-metric-sm text-on-surface-variant">Polling cada 3s</span>
+              <LiveIndicator isLive={metricsLive} />
+            </div>
           }
         />
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-space-md">
-          {systemMetrics.map((m) => (
+          {liveMetricCards.map((m) => (
             <MetricCard key={m.id} metric={m} />
           ))}
         </div>
@@ -80,21 +139,21 @@ export default function Overview() {
           <div className="flex items-center gap-1 self-start sm:self-auto bg-[#f1f5f9] p-1 rounded-lg">
             {RANGES.map((r) => (
               <button
-                key={r}
-                onClick={() => setRange(r)}
+                key={r.value}
+                onClick={() => setRange(r.value)}
                 className={`px-3 py-1 text-[12px] rounded transition-colors ${
-                  range === r
+                  range === r.value
                     ? "font-semibold bg-[#3b82f6] text-white shadow-xs"
                     : "font-medium text-on-surface-variant hover:text-on-surface hover:bg-white"
                 }`}
                 type="button"
               >
-                {r}
+                {r.label}
               </button>
             ))}
           </div>
         </div>
-        <CpuChart values={cpuHistory24h} />
+        <CpuChart values={chartHistory.cpu.length > 0 ? chartHistory.cpu : cpuHistory24h} />
       </section>
 
       <section className="flex flex-col gap-space-sm">
@@ -103,13 +162,16 @@ export default function Overview() {
           iconColor="text-[#006947]"
           title="Estado de Servicios"
           right={
-            <span className="font-label-sm text-label-sm text-on-surface-variant font-mono-metric-sm">
-              {serviceCards.length} contenedores core monitorizados
-            </span>
+            <div className="flex items-center gap-space-sm">
+              <span className="font-label-sm text-label-sm text-on-surface-variant font-mono-metric-sm">
+                {liveServiceCards.length} contenedores core monitorizados
+              </span>
+              <LiveIndicator isLive={servicesLive} />
+            </div>
           }
         />
         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-space-md">
-          {serviceCards.map((s) => (
+          {liveServiceCards.map((s) => (
             <ServiceStatCard key={s.id} service={s} />
           ))}
         </div>
@@ -167,12 +229,12 @@ export default function Overview() {
             title="Workflows en Ejecución"
             right={
               <span className="font-mono-metric-sm text-mono-metric-sm text-on-surface-variant">
-                {runningWorkflows.length} tareas concurrentes
+                {liveRunningWorkflows.length} tareas concurrentes
               </span>
             }
           />
           <div className="flex flex-col gap-space-sm">
-            {runningWorkflows.map((w) => (
+            {liveRunningWorkflows.map((w) => (
               <div
                 key={w.id}
                 className="bg-surface-container-lowest border border-[#e5e7eb] rounded-xl p-space-md shadow-sm hover:shadow-md transition-all flex flex-col gap-2"

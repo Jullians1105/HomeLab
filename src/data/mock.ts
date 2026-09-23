@@ -101,7 +101,7 @@ export const tenantClients: TenantClient[] = [
 
 export const runningWorkflows: RunningWorkflow[] = [
   {
-    id: "sync-nextcloud",
+    id: "wf-001",
     name: "Sync Nextcloud → GESTCON",
     icon: "sync",
     iconColor: "#3b82f6",
@@ -110,7 +110,7 @@ export const runningWorkflows: RunningWorkflow[] = [
     detailRight: "ETL Job #8921",
   },
   {
-    id: "backup-pg",
+    id: "wf-002",
     name: "Backup PostgreSQL Clúster",
     icon: "cloud_upload",
     iconColor: "#10b981",
@@ -119,7 +119,7 @@ export const runningWorkflows: RunningWorkflow[] = [
     detailRight: "ZFS Snap Target",
   },
   {
-    id: "ollama-embed",
+    id: "wf-003",
     name: "Ollama: Process LLM Embeddings",
     icon: "psychology",
     iconColor: "#8b5cf6",
