@@ -1,0 +1,45 @@
+{
+  "total": {
+    "bytes": 4099511627776,
+    "used": 2191183882240,
+    "free": 1908327745536,
+    "percentage": 53.5
+  },
+  "disks": [
+    {
+      "name": "NVMe",
+      "total": 274877906944,
+      "used": 225067949056,
+      "percentage": 82,
+      "type": "SSD",
+      "readSpeed": "2800MB/s",
+      "writeSpeed": "2200MB/s",
+      "status": "ok"
+    },
+    {
+      "name": "Exos 1TB",
+      "total": 1099511627776,
+      "used": 934767894528,
+      "percentage": 85,
+      "type": "HDD",
+      "readSpeed": "120MB/s",
+      "writeSpeed": "95MB/s",
+      "status": "ok"
+    },
+    {
+      "name": "Enterprise 2TB",
+      "total": 2199023255552,
+      "used": 1325400294912,
+      "percentage": 60,
+      "type": "HDD",
+      "readSpeed": "135MB/s",
+      "writeSpeed": "110MB/s",
+      "status": "ok"
+    }
+  ],
+  "prediction": {
+    "nvmeFull": "15 days",
+    "exosFull": "60 days",
+    "enterpriseFull": "120 days"
+  }
+}

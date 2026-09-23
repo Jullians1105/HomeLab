@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Proxmox",
+    "status": "online",
+    "uptime": "99.8%",
+    "cpu": 34,
+    "ram": 56,
+    "disk": 42,
+    "lastCheck": "2026-09-23T10:45:00Z"
+  },
+  {
+    "name": "n8n",
+    "status": "online",
+    "uptime": "99.9%",
+    "cpu": 12,
+    "ram": 28,
+    "disk": 8,
+    "lastCheck": "2026-09-23T10:45:00Z"
+  },
+  {
+    "name": "Metabase",
+    "status": "online",
+    "uptime": "99.5%",
+    "cpu": 18,
+    "ram": 42,
+    "disk": 15,
+    "lastCheck": "2026-09-23T10:45:00Z"
+  },
+  {
+    "name": "Ollama",
+    "status": "warning",
+    "uptime": "98.2%",
+    "cpu": 78,
+    "ram": 92,
+    "disk": 85,
+    "lastCheck": "2026-09-23T10:45:00Z"
+  },
+  {
+    "name": "PostgreSQL",
+    "status": "online",
+    "uptime": "100%",
+    "cpu": 22,
+    "ram": 38,
+    "disk": 28,
+    "lastCheck": "2026-09-23T10:45:00Z"
+  }
+]

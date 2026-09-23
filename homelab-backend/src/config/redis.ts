@@ -1,0 +1,23 @@
+import { Redis } from "ioredis";
+
+export const redis = new Redis({
+  host: process.env.REDIS_HOST ?? "localhost",
+  port: Number(process.env.REDIS_PORT ?? 6379),
+  password: process.env.REDIS_PASSWORD || undefined,
+  lazyConnect: true,
+  retryStrategy: () => null,
+});
+
+redis.on("error", (err: Error) => {
+  console.warn("[redis] no disponible, continuando sin cache:", err.message);
+});
+
+export async function checkRedisConnection(): Promise<boolean> {
+  try {
+    await redis.connect();
+    await redis.ping();
+    return true;
+  } catch {
+    return false;
+  }
+}

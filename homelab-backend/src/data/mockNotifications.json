@@ -1,0 +1,42 @@
+[
+  {
+    "id": "n1",
+    "severity": "critica",
+    "title": "Ollama: VRAM saturada en gpu-node-ai",
+    "description": "El modelo Llama-3-8B superó el 90% de uso de RAM sostenido durante 15 minutos.",
+    "source": "Ollama",
+    "timestamp": "2026-09-23T10:37:00Z"
+  },
+  {
+    "id": "n2",
+    "severity": "advertencia",
+    "title": "tank/backups al 82% de capacidad",
+    "description": "Límite operativo proyectado en ~12 días al ritmo actual de snapshots.",
+    "source": "Almacenamiento ZFS",
+    "timestamp": "2026-09-23T08:45:00Z"
+  },
+  {
+    "id": "n3",
+    "severity": "advertencia",
+    "title": "Latencia elevada en PostgreSQL",
+    "description": "El pool alcanzó 847/1000 conexiones activas.",
+    "source": "PostgreSQL",
+    "timestamp": "2026-09-23T05:45:00Z"
+  },
+  {
+    "id": "n4",
+    "severity": "informativa",
+    "title": "Backup nocturno completado",
+    "description": "Snapshot ZFS replicado correctamente a almacenamiento externo.",
+    "source": "n8n",
+    "timestamp": "2026-09-22T22:45:00Z"
+  },
+  {
+    "id": "n5",
+    "severity": "resuelta",
+    "title": "Nodo pve-node-01 reinició inesperadamente",
+    "description": "Servicio recuperado automáticamente, sin pérdida de datos reportada.",
+    "source": "Proxmox",
+    "timestamp": "2026-09-22T10:45:00Z"
+  }
+]

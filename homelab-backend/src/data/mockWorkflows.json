@@ -1,0 +1,26 @@
+[
+  {
+    "id": "wf-001",
+    "name": "Sync Nextcloud → GESTCON",
+    "status": "running",
+    "progress": 75,
+    "startTime": "2026-09-23T09:30:00Z",
+    "estimatedEnd": "2026-09-23T11:00:00Z"
+  },
+  {
+    "id": "wf-002",
+    "name": "Backup PostgreSQL",
+    "status": "running",
+    "progress": 45,
+    "startTime": "2026-09-23T10:15:00Z",
+    "estimatedEnd": "2026-09-23T11:30:00Z"
+  },
+  {
+    "id": "wf-003",
+    "name": "Ollama: Process LLM",
+    "status": "running",
+    "progress": 90,
+    "startTime": "2026-09-23T10:00:00Z",
+    "estimatedEnd": "2026-09-23T10:50:00Z"
+  }
+]
