@@ -22,3 +22,12 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Obsidian — vault vive en la raíz del repo.
+# Excluye solo estado local/efímero; la config compartida
+# (app.json, appearance.json, core-plugins.json) y todas las
+# carpetas de notas SÍ se versionan.
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
+.obsidian/cache
+.obsidian/.trash
